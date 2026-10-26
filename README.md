@@ -1,3 +1,103 @@
+```mermaid
+flowchart TB
+    subgraph USERS["Users and Channels"]
+        CUS["Customers"]
+        EMP["Employees"]
+        SUP["Suppliers"]
+        AGT["AI Agents"]
+    end
+
+    subgraph EXP["Experience Layer"]
+        WEB["Webstore"]
+        POR["Employee and Supplier Portal"]
+        ADM["Admin Dashboard"]
+        HLP["Helpdesk"]
+    end
+
+    subgraph INT["Integration and AI Layer"]
+        GW["API Gateway"]
+        MCP["MCP Servers"]
+        AI["AI Assistants and Department Agents"]
+        WF["Workflow Automation"]
+        SEC["Access Control and Audit Log"]
+    end
+
+    subgraph COMM["Commerce"]
+        SO["Sales and Orders"]
+        CRM["CRM"]
+        MKT["Marketing"]
+    end
+
+    subgraph SUPPLY["Supply Chain"]
+        INV["Inventory - IMS"]
+        WMS["Warehouse - WMS"]
+        PRC["Procurement - SCM"]
+    end
+
+    subgraph PROD["Product and Projects"]
+        PLM["Product Lifecycle - PLM"]
+        PMS["Project Management - PMS"]
+    end
+
+    subgraph FIN["Finance and People"]
+        ACC["Accounting"]
+        FINC["Financing"]
+        HR["HR and Payroll"]
+    end
+
+    subgraph DATA["Data Layer"]
+        DB[("MySQL / MariaDB / PostgreSQL")]
+        VEC[("pgvector - RAG")]
+        FS[("File Storage")]
+        BI["BI and Reporting"]
+    end
+
+    CUS --> WEB
+    CUS --> HLP
+    EMP --> POR
+    EMP --> ADM
+    SUP --> POR
+    AGT --> MCP
+
+    WEB --> GW
+    POR --> GW
+    ADM --> GW
+    HLP --> GW
+
+    MCP --> GW
+    AI --> MCP
+    AI --> WF
+    WF --> GW
+    GW --> SEC
+
+    SEC --> COMM
+    SEC --> SUPPLY
+    SEC --> PROD
+    SEC --> FIN
+
+    SO --> INV
+    INV --> WMS
+    PRC --> INV
+    PLM --> INV
+    CRM --> SO
+    MKT --> CRM
+
+    SO --> ACC
+    PRC --> ACC
+    HR --> ACC
+    ACC --> FINC
+    PMS --> HR
+
+    COMM --> DB
+    SUPPLY --> DB
+    PROD --> DB
+    FIN --> DB
+    AI --> VEC
+    DB --> BI
+    DB --> FS
+    BI --> ADM
+```
+
 # About Me
 
 > Developer, systems builder, and AI automation enthusiast focused on turning complex workflows into practical, self-hosted products.
