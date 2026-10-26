@@ -98,7 +98,7 @@ flowchart TB
     BI --> ADM
 ```
 
-# About Me
+# About Me - https://syazskylex.github.io/
 
 > Developer, systems builder, and AI automation enthusiast focused on turning complex workflows into practical, self-hosted products.
 
