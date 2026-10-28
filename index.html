@@ -3,25 +3,531 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@latest" rel="stylesheet" type="text/css" />
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@latest/themes.css" rel="stylesheet" type="text/css" />
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@latest"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Skylex — Resume & Portfolio Dashboard</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@latest/dist/full.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+        rel="stylesheet">
+    <script>tailwind.config = {theme: {extend: {fontFamily: {sans: ['Outfit', 'sans-serif'], mono: ['JetBrains Mono', 'monospace']}}}}</script>
     <link href="web.css" rel="stylesheet" type="text/css" />
 </head>
 
-<body class="p-5 h-dvh w-dvw bg-base-300">
-    <div class="mockup-browser w-full h-full border border-slate-300 bg-base-200">
-        <div class="mockup-browser-toolbar">
-            <div class="input">https://syazskylex.github.io/</div>
-        </div>
-        <div class="grid place-content-center h-full border-t border-slate-300 bg-base-100">
+<body class="bg-base-200 text-base-content">
 
+    <div id="backdrop" onclick="document.body.classList.remove('open')"></div>
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside id="sidebar">
+        <div class="flex items-center gap-3 px-5 h-16 border-b border-base-content/10 shrink-0">
+            <div
+                class="w-9 h-9 rounded-xl bg-primary text-primary-content flex items-center justify-center font-mono font-bold shrink-0">
+                SX</div>
+            <div class="lbl leading-tight">
+                <div class="font-bold">Skylex</div>
+                <div class="text-[11px] text-base-content/55">Resume · Portfolio</div>
+            </div>
         </div>
+        <nav class="flex-1 overflow-y-auto px-3 pb-4" id="nav">
+            <div class="grp">Menu</div>
+            <a class="nav-i active" data-go="overview"><i class="ph-bold ph-squares-four text-lg"></i><span
+                    class="lbl">Dashboard</span></a>
+            <a class="nav-i" data-go="resume"><i class="ph-bold ph-briefcase text-lg"></i><span
+                    class="lbl">Resume</span></a>
+            <div>
+                <a class="nav-i" data-go="projects" data-cat="All"><i class="ph-bold ph-folders text-lg"></i><span
+                        class="lbl flex-1">Projects</span><i class="chev ph-bold ph-caret-down text-xs"></i></a>
+                <div class="sub" id="sub-projects"></div>
+            </div>
+            <a class="nav-i" data-go="skills"><i class="ph-bold ph-stack text-lg"></i><span
+                    class="lbl">Skills</span></a>
+            <div class="grp">AI</div>
+            <a class="nav-i" data-go="ailab"><i class="ph-bold ph-brain text-lg"></i><span class="lbl">AI Lab</span></a>
+            <div class="grp">Support</div>
+            <a class="nav-i" data-go="contact"><i class="ph-bold ph-chat-circle-text text-lg"></i><span
+                    class="lbl">Contact</span></a>
+            <div class="grp">Others</div>
+            <a class="nav-i" onclick="window.print()"><i class="ph-bold ph-file-pdf text-lg"></i><span
+                    class="lbl">Export PDF</span></a>
+            <a class="nav-i" onclick="toggleTheme()"><i class="ph-bold ph-circle-half text-lg"></i><span
+                    class="lbl">Switch theme</span></a>
+        </nav>
+        <div class="lbl m-3 p-4 rounded-2xl bg-primary/25 text-xs leading-relaxed shrink-0">
+            <b class="block text-sm mb-1">Let's build together</b>
+            Enterprise platforms &amp; private AI.
+            <a data-go="contact" class="btn btn-primary btn-xs w-full mt-3 rounded-lg">Contact me</a>
+        </div>
+    </aside>
+
+    <div id="content" class="min-h-screen">
+
+        <!-- ============ HEADER ============ -->
+        <header class="sticky top-0 z-40 bg-base-100/90 backdrop-blur border-b border-base-content/10"
+            style="padding-top:env(safe-area-inset-top)">
+            <div class="flex items-center gap-2 h-16 px-3 lg:px-6">
+                <button class="btn btn-ghost btn-sm btn-square border border-base-content/10 lg:hidden"
+                    onclick="document.body.classList.add('open')" aria-label="Menu"><i
+                        class="ph-bold ph-list text-lg"></i></button>
+                <button class="btn btn-ghost btn-sm btn-square border border-base-content/10 hidden lg:flex"
+                    onclick="document.body.classList.toggle('mini')" aria-label="Collapse sidebar"><i
+                        class="ph-bold ph-sidebar-simple text-lg"></i></button>
+                <button onclick="openPalette()"
+                    class="input input-sm input-bordered hidden sm:flex items-center gap-2 w-64 xl:w-96 rounded-xl text-left text-base-content/50 ml-1">
+                    <i class="ph-bold ph-magnifying-glass"></i><span class="grow text-sm">Search or type
+                        command…</span><kbd class="kbd kbd-xs">⌘ K</kbd>
+                </button>
+                <h1 id="title" class="sm:hidden font-semibold ml-1">Dashboard</h1>
+                <div class="flex-1"></div>
+                <button class="btn btn-ghost btn-sm btn-circle sm:hidden" onclick="openPalette()" aria-label="Search"><i
+                        class="ph-bold ph-magnifying-glass text-lg"></i></button>
+                <button class="btn btn-ghost btn-sm btn-circle border border-base-content/10" onclick="toggleTheme()"
+                    aria-label="Theme"><i id="ti" class="ph-bold ph-moon-stars text-lg"></i></button>
+
+                <!-- Activity dropdown -->
+                <div class="dropdown dropdown-end">
+                    <div tabindex="0" role="button"
+                        class="btn btn-ghost btn-sm btn-circle border border-base-content/10 indicator"
+                        aria-label="Activity">
+                        <span class="indicator-item badge badge-warning badge-xs"></span><i
+                            class="ph-bold ph-bell text-lg"></i>
+                    </div>
+                    <div tabindex="0" class="dropdown-content z-50 mt-3 w-80 card-t shadow-xl p-4 bg-base-100">
+                        <h3 class="font-semibold mb-2">Recent activity</h3>
+                        <ul id="act-menu" class="space-y-3 text-xs"></ul>
+                    </div>
+                </div>
+
+                <!-- User dropdown -->
+                <div class="dropdown dropdown-end">
+                    <div tabindex="0" role="button"
+                        class="flex items-center gap-2 pl-1 pr-2 py-1 rounded-xl hover:bg-base-200 cursor-pointer">
+                        <div
+                            class="w-9 h-9 rounded-full bg-secondary text-secondary-content flex items-center justify-center font-mono text-xs font-bold">
+                            SX</div>
+                        <span class="hidden md:block text-sm font-medium">Skylex</span><i
+                            class="ph-bold ph-caret-down text-xs hidden md:block"></i>
+                    </div>
+                    <ul tabindex="0" class="dropdown-content z-50 mt-3 w-60 card-t shadow-xl p-2 bg-base-100 text-sm">
+                        <li class="px-3 py-2 border-b border-base-content/10 mb-1"><b>Skylex</b>
+                            <div class="text-xs text-base-content/55">Malaysia · Sedania Group</div>
+                        </li>
+                        <li><a class="nav-i" data-go="resume"><i class="ph-bold ph-user"></i>Resume</a></li>
+                        <li><a class="nav-i" data-go="contact"><i class="ph-bold ph-envelope-simple"></i>Contact</a>
+                        </li>
+                        <li><a class="nav-i" onclick="window.print()"><i class="ph-bold ph-file-pdf"></i>Export PDF</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-pad p-4 lg:p-6 max-w-[1400px] mx-auto">
+
+            <!-- breadcrumb -->
+            <div class="flex items-center justify-between mb-5 no-print">
+                <h2 id="crumb-title" class="text-xl font-semibold">Dashboard</h2>
+                <div class="text-xs text-base-content/55 hidden sm:flex items-center gap-1.5">Home <i
+                        class="ph-bold ph-caret-right text-[9px]"></i> <span id="crumb"
+                        class="text-base-content">Dashboard</span></div>
+            </div>
+
+            <!-- ===== DASHBOARD ===== -->
+            <section id="overview" class="view space-y-5">
+                <!-- Profile -->
+                <div
+                    class="card-t p-5 sm:p-6 flex flex-col sm:flex-row gap-5 sm:items-center bg-gradient-to-r from-primary/25 via-base-100 to-secondary/25">
+                    <div
+                        class="w-20 h-20 rounded-2xl bg-primary text-primary-content flex items-center justify-center text-2xl font-bold font-mono shrink-0">
+                        SX</div>
+                    <div class="flex-1 space-y-1.5">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <h3 class="text-2xl font-semibold">Skylex</h3><span
+                                class="badge badge-success badge-sm">Open to collaborate</span>
+                        </div>
+                        <p class="text-sm font-medium">Full-Stack Engineer · AI/LLM Infrastructure · Enterprise Systems
+                            Integration</p>
+                        <p class="text-sm text-base-content/70 max-w-2xl">I build enterprise platforms and the AI
+                            infrastructure behind them with Laravel, Odoo and PHP portals, local LLM inference and
+                            internal tooling for Offspring and Tanamera (Sedania Group).</p>
+                    </div>
+                    <div class="flex sm:flex-col gap-2 no-print"><button
+                            class="btn btn-primary btn-sm rounded-xl gap-1.5 flex-1" onclick="window.print()"><i
+                                class="ph-bold ph-download-simple"></i>Resume PDF</button><button
+                            class="btn btn-outline btn-sm rounded-xl gap-1.5 flex-1" data-go="contact"><i
+                                class="ph-bold ph-paper-plane-tilt"></i>Hire me</button></div>
+                </div>
+
+                <!-- Metrics -->
+                <div id="metrics" class="grid grid-cols-2 xl:grid-cols-4 gap-4"></div>
+
+                <div class="grid xl:grid-cols-12 gap-4">
+                    <!-- Bar chart -->
+                    <div class="card-t p-5 xl:col-span-7">
+                        <div class="flex justify-between items-center mb-1">
+                            <h3 class="font-semibold">Projects by category</h3><button class="btn btn-ghost btn-xs"
+                                data-go="projects">View all</button>
+                        </div>
+                        <p class="text-xs text-base-content/55 mb-4">Featured work grouped by type</p>
+                        <div id="bars" class="flex items-end gap-4 h-48 pt-4"></div>
+                    </div>
+                    <!-- Radial gauge -->
+                    <div class="card-t p-5 xl:col-span-5 flex flex-col">
+                        <h3 class="font-semibold">Local AI rollout</h3>
+                        <p class="text-xs text-base-content/55 mb-2">Mac Mini M4 milestones</p>
+                        <div class="relative w-44 h-44 mx-auto my-2">
+                            <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
+                                <circle cx="60" cy="60" r="50" fill="none" stroke="currentColor" stroke-opacity=".1"
+                                    stroke-width="12" />
+                                <circle id="gauge" cx="60" cy="60" r="50" fill="none" stroke="oklch(var(--p))"
+                                    stroke-width="12" stroke-linecap="round" stroke-dasharray="314"
+                                    stroke-dashoffset="314" style="transition:stroke-dashoffset 1s" />
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <div class="text-3xl font-semibold">2/3</div>
+                                <div class="text-[11px] text-base-content/55">milestones done</div>
+                            </div>
+                        </div>
+                        <ul class="text-xs space-y-2 mt-auto">
+                            <li class="flex items-center gap-2"><i
+                                    class="ph-fill ph-check-circle text-success text-base"></i>ComfyUI workflow</li>
+                            <li class="flex items-center gap-2"><i
+                                    class="ph-fill ph-check-circle text-success text-base"></i>Laravel AI SDK + Ollama
+                                chatbot UI</li>
+                            <li class="flex items-center gap-2"><i
+                                    class="ph-bold ph-hourglass text-warning text-base"></i>Portal integrations
+                                (awaiting device)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="grid xl:grid-cols-12 gap-4">
+                    <div class="card-t p-5 xl:col-span-7 overflow-hidden">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="font-semibold">Recent work</h3><button class="btn btn-ghost btn-xs"
+                                data-go="projects">See all</button>
+                        </div>
+                        <div class="overflow-x-auto -mx-2">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr class="text-base-content/55">
+                                        <th>Project</th>
+                                        <th>Category</th>
+                                        <th>Key stack</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-t p-5 xl:col-span-5">
+                        <h3 class="font-semibold mb-3">Activity</h3>
+                        <ul id="act-list" class="space-y-4 text-sm"></ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== RESUME ===== -->
+            <section id="resume" class="view">
+                <div class="grid lg:grid-cols-3 gap-4">
+                    <div class="card-t p-5 lg:col-span-2">
+                        <h3 class="font-semibold mb-4 flex items-center gap-2"><i
+                                class="ph-bold ph-briefcase text-primary"></i>Work experience</h3>
+                        <ul class="timeline timeline-snap-icon timeline-compact timeline-vertical">
+                            <li>
+                                <div class="timeline-middle text-primary"><i
+                                        class="ph-fill ph-check-circle text-xl"></i></div>
+                                <div class="timeline-end mb-8 ml-2">
+                                    <time class="font-mono text-xs font-semibold text-primary">PRESENT
+                                        <!-- TODO: start year --></time>
+                                    <div class="font-semibold text-base">Full-Stack &amp; AI Infrastructure Engineer
+                                    </div>
+                                    <div class="text-xs text-base-content/60 mb-2">Offspring · Tanamera — Sedania Group
+                                    </div>
+                                    <ul class="text-xs text-base-content/75 space-y-1.5 list-disc pl-4 leading-relaxed">
+                                        <li>Build and integrate enterprise systems on Laravel, CodeIgniter, Odoo and a
+                                            customized PHP portal platform.</li>
+                                        <li>Drive local AI infrastructure and internal tooling decisions; wrote the
+                                            business case for a Mac Mini M4 AI server (Ollama, ComfyUI, Laravel AI SDK,
+                                            pgvector RAG).</li>
+                                        <li>Audited and hardened deployment scripts for a Laravel/CodeIgniter portal.
+                                        </li>
+                                        <li>Diagnosed Office 365 SMTP/OAuth delivery failures across PHPMailer and Odoo.
+                                        </li>
+                                        <li>Designed a 13-category content moderation policy and a KPI appraisal
+                                            framework (70/20/10 scoring, approval locks).</li>
+                                        <li>Front-end work on brand storefronts, including Shopify Liquid POS and cart
+                                            scripting.</li>
+                                    </ul>
+                                </div>
+                                <hr class="bg-primary/40">
+                            </li>
+                            <li>
+                                <hr class="bg-primary/40">
+                                <div class="timeline-middle text-base-content/30"><i
+                                        class="ph-bold ph-circle-dashed text-xl"></i></div>
+                                <div class="timeline-end ml-2 text-xs italic text-base-content/50">
+                                    <!-- TODO: earlier roles & years -->Earlier roles go here.</div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="card-t p-5">
+                            <h3 class="font-semibold mb-3 flex items-center gap-2"><i
+                                    class="ph-bold ph-graduation-cap text-secondary"></i>Education</h3>
+                            <p class="text-xs italic text-base-content/50"><!-- TODO -->Add your education here.</p>
+                        </div>
+                        <div class="card-t p-5">
+                            <h3 class="font-semibold mb-3 flex items-center gap-2"><i
+                                    class="ph-bold ph-lightning text-warning"></i>Core strengths</h3>
+                            <div class="flex flex-wrap gap-1.5"><span
+                                    class="badge badge-primary badge-outline">Full-stack PHP</span><span
+                                    class="badge badge-secondary badge-outline">Odoo integration</span><span
+                                    class="badge badge-accent badge-outline">Local LLM infra</span><span
+                                    class="badge badge-info badge-outline">Systems architecture</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== PROJECTS ===== -->
+            <section id="projects" class="view space-y-4">
+                <div class="flex flex-wrap items-center gap-3 justify-between">
+                    <div id="filters"
+                        class="tabs tabs-boxed bg-base-100 border border-base-content/10 overflow-x-auto flex-nowrap">
+                    </div>
+                    <input id="psearch" class="input input-sm input-bordered rounded-xl w-full sm:w-64"
+                        placeholder="Filter projects…" oninput="query=this.value;renderProjects()">
+                </div>
+                <div id="pgrid" class="grid sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+                <p id="empty" class="hidden text-center text-sm text-base-content/50 py-10">No projects match.</p>
+            </section>
+
+            <!-- ===== SKILLS ===== -->
+            <section id="skills" class="view">
+                <div id="sgrid" class="grid md:grid-cols-2 gap-4"></div>
+            </section>
+
+            <!-- ===== AI LAB ===== -->
+            <section id="ailab" class="view space-y-4">
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="card-t p-5">
+                        <h3 class="font-semibold mb-3 flex items-center gap-2"><i
+                                class="ph-bold ph-hard-drives text-primary"></i>Hardware &amp; runtimes</h3>
+                        <ul class="text-sm space-y-2.5 text-base-content/80">
+                            <li><b>Mac Mini M4</b> for heavier workloads: Ollama, ComfyUI, Laravel AI SDK, pgvector RAG.
+                            </li>
+                            <li><b>Low-VRAM PC</b> with small coding models for a VS Code + Ollama assistant.</li>
+                            <li><b>llama.cpp from source</b> to try speculative decoding before bundled runtimes support
+                                it.</li>
+                        </ul>
+                    </div>
+                    <div class="card-t p-5">
+                        <h3 class="font-semibold mb-3 flex items-center gap-2"><i
+                                class="ph-bold ph-tree-structure text-secondary"></i>Orchestration &amp; governance</h3>
+                        <ul class="text-sm space-y-2.5 text-base-content/80">
+                            <li><b>Self-hosted MCP gateways:</b> Junctio and MCPJungle.</li>
+                            <li><b>Open WebUI</b> Tool + Filter for dynamic tool enablement.</li>
+                            <li><b>Portal Sedania</b> (Odoo) AI integration.</li>
+                            <li><b>Moderation policy</b> across 13 categories.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-t overflow-hidden">
+                    <div
+                        class="bg-neutral text-neutral-content px-4 py-2 text-[11px] font-mono flex items-center gap-2">
+                        <i class="ph-bold ph-terminal-window"></i>RAG · Laravel + Ollama + pgvector</div>
+                    <pre class="bg-neutral text-neutral-content text-xs font-mono p-4 overflow-x-auto leading-relaxed"><code>$chunks = Document::nearestTo($embedding)->limit(5)->get();
+
+$reply = Ollama::chat([
+    'model'    =&gt; 'qwen2.5-coder:1.5b',
+    'messages' =&gt; $prompt-&gt;withContext($chunks),
+]);  // nothing leaves your network</code></pre>
+                </div>
+            </section>
+
+            <!-- ===== CONTACT ===== -->
+            <section id="contact" class="view">
+                <div class="grid lg:grid-cols-5 gap-4">
+                    <div class="card-t p-5 lg:col-span-2 space-y-4">
+                        <h3 class="font-semibold flex items-center gap-2"><i
+                                class="ph-bold ph-address-book text-primary"></i>Get in touch</h3>
+                        <p class="text-sm text-base-content/70">Enterprise platforms, Odoo and portal integration, or
+                            private AI infrastructure.</p>
+                        <ul class="text-sm space-y-3">
+                            <li class="flex items-center gap-3"><span
+                                    class="w-9 h-9 rounded-lg bg-primary/25 flex items-center justify-center"><i
+                                        class="ph-bold ph-envelope-simple"></i></span>your-email@example.com
+                                <!-- TODO --></li>
+                            <li class="flex items-center gap-3"><span
+                                    class="w-9 h-9 rounded-lg bg-secondary/25 flex items-center justify-center"><i
+                                        class="ph-bold ph-map-pin"></i></span>Malaysia</li>
+                            <li><a href="https://github.com" target="_blank" rel="noopener"
+                                    class="flex items-center gap-3 hover:text-primary"><span
+                                        class="w-9 h-9 rounded-lg bg-accent/25 flex items-center justify-center"><i
+                                            class="ph-bold ph-github-logo"></i></span>GitHub <!-- TODO --></a></li>
+                            <li><a href="https://linkedin.com" target="_blank" rel="noopener"
+                                    class="flex items-center gap-3 hover:text-primary"><span
+                                        class="w-9 h-9 rounded-lg bg-info/25 flex items-center justify-center"><i
+                                            class="ph-bold ph-linkedin-logo"></i></span>LinkedIn <!-- TODO --></a></li>
+                        </ul>
+                    </div>
+                    <form onsubmit="sendMsg(event)" class="card-t p-5 lg:col-span-3 space-y-3 no-print">
+                        <div class="grid sm:grid-cols-2 gap-3"><input class="input input-bordered input-sm rounded-lg"
+                                placeholder="Your name" required><input type="email"
+                                class="input input-bordered input-sm rounded-lg" placeholder="Your email" required>
+                        </div>
+                        <input class="input input-bordered input-sm rounded-lg w-full" placeholder="Subject" required>
+                        <textarea rows="5" class="textarea textarea-bordered textarea-sm rounded-lg w-full"
+                            placeholder="Message" required></textarea>
+                        <button class="btn btn-primary btn-sm rounded-xl w-full gap-2"><i
+                                class="ph-bold ph-paper-plane-right"></i>Send message</button>
+                    </form>
+                </div>
+            </section>
+
+        </main>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script>
-    <script src="web.js"></script>
+
+    <!-- Mobile bottom nav -->
+    <nav id="bnav"
+        class="fixed bottom-0 inset-x-0 z-40 bg-base-100 border-t border-base-content/10 grid grid-cols-5 lg:hidden no-print">
+        <button data-go="overview" class="flex flex-col items-center justify-center gap-0.5 active"><i
+                class="ph-bold ph-squares-four text-lg"></i><span class="text-[10px]">Home</span></button>
+        <button data-go="resume" class="flex flex-col items-center justify-center gap-0.5"><i
+                class="ph-bold ph-briefcase text-lg"></i><span class="text-[10px]">Resume</span></button>
+        <button data-go="projects" data-cat="All" class="flex flex-col items-center justify-center gap-0.5"><i
+                class="ph-bold ph-folders text-lg"></i><span class="text-[10px]">Projects</span></button>
+        <button data-go="ailab" class="flex flex-col items-center justify-center gap-0.5"><i
+                class="ph-bold ph-brain text-lg"></i><span class="text-[10px]">AI Lab</span></button>
+        <button data-go="contact" class="flex flex-col items-center justify-center gap-0.5"><i
+                class="ph-bold ph-chat-circle-text text-lg"></i><span class="text-[10px]">Contact</span></button>
+    </nav>
+
+    <!-- Command palette (⌘K) -->
+    <dialog id="palette" class="modal modal-top">
+        <div class="modal-box max-w-xl mx-auto mt-16 rounded-2xl p-3">
+            <input id="pq" class="input input-bordered w-full rounded-xl" placeholder="Jump to a page or project…"
+                oninput="renderPalette()"
+                onkeydown="if(event.key==='Enter'){const a=document.querySelector('#plist [data-go]');a&&a.click()}">
+            <ul id="plist" class="menu p-0 mt-2 max-h-72 overflow-y-auto"></ul>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>close</button></form>
+    </dialog>
+
+    <div id="toast" class="toast toast-top toast-center z-[60]"></div>
+
+    <script>
+        const PAGES = {overview: 'Dashboard', resume: 'Resume', projects: 'Projects', skills: 'Skills', ailab: 'AI Lab', contact: 'Contact'};
+        const PROJECTS = [
+            {n: 'UEOP', c: 'Platform', i: 'stack', col: 'primary', s: 'Concept', d: 'Unified Enterprise Operations Platform spanning ERP, CRM, IMS, WMS, SCM, PLM, PMS, accounting, helpdesk, BI, marketing, financing and webstore.', t: ['Laravel', 'Odoo', 'Architecture']},
+            {n: 'MixSwift', c: 'Platform', i: 'squares-four', col: 'secondary', s: 'In progress', d: 'Native multi-platform drag-and-drop system builder with exportable native output, built PHP-first.', t: ['Laravel', 'Livewire', 'Flux', 'Tauri']},
+            {n: 'Open WebUI Tool + Filter', c: 'AI', i: 'plug', col: 'accent', s: 'Working', d: 'Lets a model enable other workspace tools dynamically at inference time by merging tool IDs into the request.', t: ['Python', 'Open WebUI']},
+            {n: 'Obsidian Docs Generator', c: 'Tooling', i: 'graph', col: 'info', s: 'In progress', d: 'PHP CLI that analyzes Laravel and CodeIgniter codebases and exports an Obsidian vault with call-graph connectivity.', t: ['PHP CLI', 'Static analysis']},
+            {n: 'Tanamera Japan', c: 'Web', i: 'storefront', col: 'warning', s: 'In progress', d: 'WooCommerce storefront at tanamera.jp, being restyled with Tailwind CSS.', t: ['WooCommerce', 'Tailwind'], url: 'https://tanamera.jp/'},
+            {n: 'Self-hosted Deploy Stack', c: 'Tooling', i: 'cloud-arrow-up', col: 'success', s: 'Active', d: 'Dokploy with Railpack for Statamic, local apps via Cloudflare Tunnel, and audited bash deploy scripts.', t: ['Dokploy', 'Cloudflare', 'Bash']}
+        ];
+        const SKILLS = [
+            {h: 'Frontend', i: 'layout', col: 'primary', s: ['HTML / CSS / JS', 'Tailwind CSS', 'daisyUI', 'Livewire', 'Flux UI', 'Shopify Liquid']},
+            {h: 'Backend', i: 'cpu', col: 'secondary', s: ['PHP', 'Laravel', 'CodeIgniter', 'WooCommerce', 'Statamic', 'REST APIs']},
+            {h: 'Enterprise & DevOps', i: 'plugs-connected', col: 'accent', s: ['Odoo', 'Dokploy', 'Cloudflare Tunnel', 'Bash deploys', 'Office 365 OAuth', 'Supabase']},
+            {h: 'AI & LLM Infra', i: 'brain', col: 'info', s: ['Ollama', 'llama.cpp', 'ComfyUI', 'pgvector / RAG', 'Open WebUI', 'MCP gateways']}
+        ];
+        const ACT = [
+            ['Restyling tanamera.jp with Tailwind CSS', 'storefront', 'warning'],
+            ['MixSwift native builder architecture', 'squares-four', 'secondary'],
+            ['Statamic on Dokploy via Railpack', 'cloud-arrow-up', 'success'],
+            ['Wiring up MCP gateways', 'plugs', 'info']
+        ];
+        const STATUS = {'Concept': 'info', 'In progress': 'warning', 'Working': 'success', 'Active': 'success'};
+        let filter = 'All', query = '';
+
+        const $ = id => document.getElementById(id);
+        const cats = () => [...new Set(PROJECTS.map(p => p.c))];
+
+        function renderAll() {
+            // metrics
+            const M = [['Featured projects', PROJECTS.length, 'folders', 'primary', 'projects'], ['Skill domains', SKILLS.length, 'stack', 'secondary', 'skills'], ['MCP gateways', 2, 'plugs', 'accent', 'ailab'], ['Group companies', 2, 'buildings', 'info', 'resume']];
+            $('metrics').innerHTML = M.map(m => `<button data-go="${m[4]}" class="card-t p-4 sm:p-5 text-left hover:shadow-md transition">
+    <span class="w-11 h-11 rounded-xl bg-${m[3]}/25 text-${m[3]} flex items-center justify-center text-xl"><i class="ph-bold ph-${m[2]}"></i></span>
+    <div class="text-xs text-base-content/55 mt-4">${m[0]}</div><div class="text-2xl font-semibold">${m[1]}</div></button>`).join('');
+            // bars
+            const counts = cats().map(c => [c, PROJECTS.filter(p => p.c === c).length]), max = Math.max(...counts.map(x => x[1]));
+            const cols = ['primary', 'secondary', 'accent', 'info'];
+            $('bars').innerHTML = counts.map((x, i) => `<div class="flex-1 flex flex-col items-center justify-end h-full gap-2">
+    <span class="text-xs font-semibold">${x[1]}</span><div class="w-full max-w-14 rounded-t-lg bg-${cols[i % 4]}/60 hover:bg-${cols[i % 4]} transition" style="height:${x[1] / max * 100}%"></div>
+    <span class="text-[11px] text-base-content/60">${x[0]}</span></div>`).join('');
+            // recent work table
+            $('recent').innerHTML = PROJECTS.slice(0, 5).map(p => `<tr class="hover cursor-pointer" onclick="go('projects')">
+    <td><div class="flex items-center gap-3"><span class="w-9 h-9 rounded-lg bg-${p.col}/25 text-${p.col} flex items-center justify-center"><i class="ph-bold ph-${p.i}"></i></span><b class="font-medium">${p.n}</b></div></td>
+    <td class="text-base-content/70">${p.c}</td><td class="text-base-content/70">${p.t.slice(0, 2).join(', ')}</td>
+    <td><span class="badge badge-${STATUS[p.s]} badge-sm">${p.s}</span></td></tr>`).join('');
+            // activity
+            const li = ACT.map(a => `<li class="flex items-center gap-3"><span class="w-9 h-9 rounded-full bg-${a[2]}/25 text-${a[2]} flex items-center justify-center shrink-0"><i class="ph-bold ph-${a[1]}"></i></span><span>${a[0]}</span></li>`).join('');
+            $('act-list').innerHTML = li; $('act-menu').innerHTML = li;
+            // sidebar submenu + skills
+            $('sub-projects').innerHTML = ['All', ...cats()].map(c => `<a class="nav-i" data-go="projects" data-cat="${c}">${c}</a>`).join('');
+            $('sgrid').innerHTML = SKILLS.map(g => `<div class="card-t p-5"><div class="flex items-center gap-3 mb-3">
+    <span class="w-10 h-10 rounded-xl bg-${g.col}/25 text-${g.col} flex items-center justify-center text-xl"><i class="ph-bold ph-${g.i}"></i></span><h3 class="font-semibold">${g.h}</h3></div>
+    <div class="flex flex-wrap gap-1.5">${g.s.map(s => `<span class="badge badge-${g.col} badge-outline">${s}</span>`).join('')}</div></div>`).join('');
+            setTimeout(() => $('gauge').style.strokeDashoffset = 314 * (1 - 2 / 3), 150);
+            renderFilters(); renderProjects();
+        }
+        function renderFilters() {
+            $('filters').innerHTML = ['All', ...cats()].map(c => `<a class="tab whitespace-nowrap ${c === filter ? 'tab-active font-semibold' : ''}" onclick="filter='${c}';renderFilters();renderProjects()">${c}</a>`).join('');
+        }
+        function renderProjects() {
+            const l = PROJECTS.filter(p => (filter === 'All' || p.c === filter) && (p.n + p.d + p.t.join(' ')).toLowerCase().includes(query.toLowerCase()));
+            $('pgrid').innerHTML = l.map(p => `<article class="card-t overflow-hidden hover:shadow-md transition">
+    <div class="h-20 bg-${p.col}/25 flex items-center justify-center"><i class="ph-bold ph-${p.i} text-4xl text-${p.col}"></i></div>
+    <div class="p-4 space-y-2.5"><div class="flex justify-between"><span class="badge badge-${p.col} badge-sm">${p.c}</span><span class="badge badge-${STATUS[p.s]} badge-outline badge-sm">${p.s}</span></div>
+    <h3 class="font-semibold">${p.n}</h3><p class="text-xs text-base-content/70 leading-relaxed">${p.d}</p>
+    <div class="flex flex-wrap gap-1">${p.t.map(t => `<span class="badge badge-ghost badge-sm text-[10px]">${t}</span>`).join('')}</div>
+    ${p.url ? `<a href="${p.url}" target="_blank" rel="noopener" class="btn btn-xs btn-outline rounded-lg gap-1"><i class="ph-bold ph-arrow-square-out"></i>Visit</a>` : ''}</div></article>`).join('');
+            $('empty').classList.toggle('hidden', l.length > 0);
+        }
+
+        function go(id, cat) {
+            if (!PAGES[id]) id = 'overview';
+            if (cat) {filter = cat; renderFilters(); renderProjects()}
+            document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === id));
+            document.querySelectorAll('#nav [data-go],#bnav [data-go]').forEach(b => b.classList.toggle('active', b.dataset.go === id && (!b.dataset.cat || b.dataset.cat === 'All' && id === 'projects')));
+            $('sub-projects').classList.toggle('show', id === 'projects');
+            $('title').textContent = $('crumb-title').textContent = $('crumb').textContent = PAGES[id];
+            document.body.classList.remove('open'); window.scrollTo({top: 0});
+            if (location.hash !== '#' + id) history.replaceState(null, '', '#' + id);
+        }
+        document.addEventListener('click', e => {
+            const t = e.target.closest('[data-go]');
+            if (t) {e.preventDefault(); go(t.dataset.go, t.dataset.cat); if ($('palette').open) $('palette').close()}
+        });
+        window.addEventListener('hashchange', () => go(location.hash.slice(1)));
+
+        /* command palette */
+        function openPalette() {$('palette').showModal(); $('pq').value = ''; renderPalette(); $('pq').focus()}
+        function renderPalette() {
+            const q = $('pq').value.toLowerCase();
+            const items = [...Object.entries(PAGES).map(([k, v]) => [v, 'page', k, '']), ...PROJECTS.map(p => [p.n, 'project', 'projects', p.c])].filter(i => i[0].toLowerCase().includes(q));
+            $('plist').innerHTML = items.map(i => `<li><a data-go="${i[2]}" ${i[3] ? `data-cat="${i[3]}"` : ''}><i class="ph-bold ph-${i[1] === 'page' ? 'arrow-elbow-down-right' : 'folder'}"></i>${i[0]}<span class="ml-auto text-[10px] text-base-content/40">${i[1]}</span></a></li>`).join('') || '<li class="p-3 text-sm text-base-content/50">No results</li>';
+        }
+        document.addEventListener('keydown', e => {if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {e.preventDefault(); openPalette()} });
+
+        function toggleTheme() {
+            const h = document.documentElement, n = h.dataset.theme === 'pastel' ? 'dim' : 'pastel';
+            h.dataset.theme = n; $('ti').className = 'ph-bold text-lg ' + (n === 'pastel' ? 'ph-moon-stars' : 'ph-sun');
+        }
+        function sendMsg(e) {
+            e.preventDefault(); e.target.reset();
+            const t = document.createElement('div'); t.className = 'alert alert-success text-xs py-2 rounded-xl';
+            t.textContent = 'Message sent! (connect this form to your backend)'; $('toast').appendChild(t); setTimeout(() => t.remove(), 2500);
+        }
+
+        renderAll(); go(location.hash.slice(1) || 'overview');
+    </script>
 </body>
 
 </html>
