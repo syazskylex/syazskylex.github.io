@@ -1,0 +1,6 @@
+*, body {
+    cursor: url("cursor.png"), pointer;
+}
+input, .input {
+    cursor: url("click.png"), auto;
+}
