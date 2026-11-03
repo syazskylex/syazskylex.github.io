@@ -104,7 +104,7 @@ flowchart TB
 
 > Developer, systems builder, and AI automation enthusiast focused on turning complex workflows into practical, self-hosted products.
 
-Hi, I'm **Syaz Skylex** - **Syazani Tarmidi**. I work across backend engineering, web platforms, infrastructure, and AI integration. I enjoy connecting systems that are usually separate (commerce, internal operations, employee tools, automation, and AI agents) into coherent workflows.
+Hi, I'm **Syaz Skylex**. I work across backend engineering, web platforms, infrastructure, and AI integration. I enjoy connecting systems that are usually separate (commerce, internal operations, employee tools, automation, and AI agents) into coherent workflows.
 
 This README is a public-facing overview of my technical interests and ongoing areas of work. It intentionally leaves out private financial, health, location, account, and infrastructure details.
 
@@ -257,3 +257,4 @@ I am especially interested in projects that combine several of these themes:
 ---
 
 *This profile is a snapshot of my interests and technical direction. Projects, tools, and priorities may change over time.*
+Muhammad Syazani Bin Tarmidi
